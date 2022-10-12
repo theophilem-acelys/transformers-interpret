@@ -33,8 +33,9 @@ class MultiLabelClassificationExplainer(SequenceClassificationExplainer):
         tokenizer: PreTrainedTokenizer,
         attribution_type="lig",
         custom_labels: Optional[List[str]] = None,
+        tokenizer_kwargs: Optional[Dict] = {},
     ):
-        super().__init__(model, tokenizer, attribution_type, custom_labels)
+        super().__init__(model, tokenizer, attribution_type, custom_labels, tokenizer_kwargs)
         self.labels = []
 
     @property
@@ -133,6 +134,7 @@ class MultiLabelClassificationExplainer(SequenceClassificationExplainer):
             explainer = SequenceClassificationExplainer(
                 self.model,
                 self.tokenizer,
+                tokenizer_kwargs=self.tokenizer_kwargs,
             )
             explainer(text, i, embedding_type)
 

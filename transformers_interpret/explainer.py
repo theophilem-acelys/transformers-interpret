@@ -1,7 +1,7 @@
 import inspect
 import re
 from abc import ABC, abstractmethod, abstractproperty
-from typing import List, Tuple, Union
+from typing import List, Tuple, Union, Dict, Optional
 
 import torch
 from transformers import PreTrainedModel, PreTrainedTokenizer
@@ -12,9 +12,11 @@ class BaseExplainer(ABC):
         self,
         model: PreTrainedModel,
         tokenizer: PreTrainedTokenizer,
+        tokenizer_kwargs: Optional[Dict] = {},
     ):
         self.model = model
         self.tokenizer = tokenizer
+        self.tokenizer_kwargs = tokenizer_kwargs
 
         if self.model.config.model_type == "gpt2":
             self.ref_token_id = self.tokenizer.eos_token_id
@@ -121,7 +123,7 @@ class BaseExplainer(ABC):
             raise NotImplementedError("Lists of text are not currently supported.")
 
         text_ids = self.encode(text)
-        input_ids = self.tokenizer.encode(text, add_special_tokens=True)
+        input_ids = self.tokenizer.encode(text, add_special_tokens=True, **self.tokenizer_kwargs)
 
         # if no special tokens were added
         if len(text_ids) == len(input_ids):

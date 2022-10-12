@@ -1,4 +1,4 @@
-from typing import List, Tuple
+from typing import List, Tuple, Dict, Optional
 
 import torch
 from captum.attr import visualization as viz
@@ -38,6 +38,7 @@ class ZeroShotClassificationExplainer(SequenceClassificationExplainer, QuestionA
         model: PreTrainedModel,
         tokenizer: PreTrainedTokenizer,
         attribution_type: str = "lig",
+        tokenizer_kwargs: Optional[Dict] = {},
     ):
         """
 
@@ -45,12 +46,13 @@ class ZeroShotClassificationExplainer(SequenceClassificationExplainer, QuestionA
             model (PreTrainedModel):Pretrained huggingface Sequence Classification model. Must be a NLI model.
             tokenizer (PreTrainedTokenizer): Pretrained huggingface tokenizer
             attribution_type (str, optional): The attribution method to calculate on. Defaults to "lig".
+            tokenizer_kwargs (Dict, optional): A dictionary containing the keyword arguments to pass to the tokenizer
 
         Raises:
             AttributionTypeNotSupportedError: [description]
             ValueError: [description]
         """
-        super().__init__(model, tokenizer)
+        super().__init__(model, tokenizer, tokenizer_kwargs=tokenizer_kwargs)
         if attribution_type not in SUPPORTED_ATTRIBUTION_TYPES:
             raise AttributionTypeNotSupportedError(
                 f"""Attribution type '{attribution_type}' is not supported.

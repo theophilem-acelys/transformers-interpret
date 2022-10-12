@@ -37,6 +37,7 @@ class SequenceClassificationExplainer(BaseExplainer):
         tokenizer: PreTrainedTokenizer,
         attribution_type: str = "lig",
         custom_labels: Optional[List[str]] = None,
+        tokenizer_kwargs: Optional[Dict] = {},
     ):
         """
         Args:
@@ -46,11 +47,12 @@ class SequenceClassificationExplainer(BaseExplainer):
             custom_labels (List[str], optional): Applies custom labels to label2id and id2label configs.
                                                  Labels must be same length as the base model configs' labels.
                                                  Labels and ids are applied index-wise. Defaults to None.
+            tokenizer_kwargs (Dict, optional): A dictionary containing the keyword arguments to pass to the tokenizer
 
         Raises:
             AttributionTypeNotSupportedError:
         """
-        super().__init__(model, tokenizer)
+        super().__init__(model, tokenizer, tokenizer_kwargs)
         if attribution_type not in SUPPORTED_ATTRIBUTION_TYPES:
             raise AttributionTypeNotSupportedError(
                 f"""Attribution type '{attribution_type}' is not supported.
@@ -91,7 +93,7 @@ class SequenceClassificationExplainer(BaseExplainer):
         return id2label, label2id
 
     def encode(self, text: str = None) -> list:
-        return self.tokenizer.encode(text, add_special_tokens=False)
+        return self.tokenizer.encode(text, add_special_tokens=False, **self.tokenizer_kwargs)
 
     def decode(self, input_ids: torch.Tensor) -> list:
         "Decode 'input_ids' to string using tokenizer"
@@ -326,9 +328,9 @@ class PairwiseSequenceClassificationExplainer(SequenceClassificationExplainer):
         self, text1: Union[List, str], text2: Union[List, str]
     ) -> Tuple[torch.Tensor, torch.Tensor, int]:
 
-        t1_ids = self.tokenizer.encode(text1, add_special_tokens=False)
-        t2_ids = self.tokenizer.encode(text2, add_special_tokens=False)
-        input_ids = self.tokenizer.encode([text1, text2], add_special_tokens=True)
+        t1_ids = self.tokenizer.encode(text1, add_special_tokens=False, **self.tokenizer_kwargs)
+        t2_ids = self.tokenizer.encode(text2, add_special_tokens=False, **self.tokenizer_kwargs)
+        input_ids = self.tokenizer.encode([text1, text2], add_special_tokens=True, **self.tokenizer_kwargs)
         if self.model.config.model_type == "roberta":
             ref_input_ids = (
                 [self.cls_token_id]

@@ -22,6 +22,7 @@ class TokenClassificationExplainer(BaseExplainer):
         model: PreTrainedModel,
         tokenizer: PreTrainedTokenizer,
         attribution_type="lig",
+        tokenizer_kwargs: Optional[Dict] = {},
     ):
 
         """
@@ -29,11 +30,12 @@ class TokenClassificationExplainer(BaseExplainer):
             model (PreTrainedModel): Pretrained huggingface Sequence Classification model.
             tokenizer (PreTrainedTokenizer): Pretrained huggingface tokenizer
             attribution_type (str, optional): The attribution method to calculate on. Defaults to "lig".
+            tokenizer_kwargs (Dict, optional): A dictionary containing the keyword arguments to pass to the tokenizer
 
         Raises:
             AttributionTypeNotSupportedError:
         """
-        super().__init__(model, tokenizer)
+        super().__init__(model, tokenizer, tokenizer_kwargs)
         if attribution_type not in SUPPORTED_ATTRIBUTION_TYPES:
             raise AttributionTypeNotSupportedError(
                 f"""Attribution type '{attribution_type}' is not supported.
@@ -55,7 +57,7 @@ class TokenClassificationExplainer(BaseExplainer):
 
     def encode(self, text: str = None) -> list:
         "Encode the text using tokenizer"
-        return self.tokenizer.encode(text, add_special_tokens=False)
+        return self.tokenizer.encode(text, add_special_tokens=False, **self.tokenizer_kwargs)
 
     def decode(self, input_ids: torch.Tensor) -> list:
         "Decode 'input_ids' to string using tokenizer"
