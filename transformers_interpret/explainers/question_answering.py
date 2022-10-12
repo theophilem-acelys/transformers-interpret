@@ -167,7 +167,7 @@ class QuestionAnsweringExplainer(BaseExplainer):
         if html_filepath:
             if not html_filepath.endswith(".html"):
                 html_filepath = html_filepath + ".html"
-            with open(html_filepath, "w") as html_file:
+            with open(html_filepath, "w", encoding='utf-8') as html_file:
                 html_file.write(html.data)
         return html
 
