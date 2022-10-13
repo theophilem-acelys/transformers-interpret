@@ -123,7 +123,7 @@ class QuestionAnsweringExplainer(BaseExplainer):
 
             start = preds[0].argmax()
             end = preds[1].argmax()
-            return " ".join([self.tokenizer.convert_tokens_to_string(token) for token inself.decode(self.input_ids)][start : end + 1])
+            return " ".join([self.tokenizer.convert_tokens_to_string(token) for token in self.decode(self.input_ids)][start : end + 1])
         else:
             raise InputIdsNotCalculatedError("input_ids have not been created yet.`")
 
