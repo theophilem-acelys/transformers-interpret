@@ -95,6 +95,7 @@ class ZeroShotClassificationExplainer(SequenceClassificationExplainer, QuestionA
 
         """
         tokens = [token.replace("Ġ", "") for token in self.decode(self.input_ids)]
+        tokens = [self.tokenizer.convert_tokens_to_string(token) for token in tokens]
 
         if not self.include_hypothesis:
             tokens = tokens[: self.sep_idx]

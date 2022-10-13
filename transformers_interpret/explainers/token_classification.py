@@ -144,6 +144,7 @@ class TokenClassificationExplainer(BaseExplainer):
 
         score_vizs = []
         tokens = [token.replace("Ġ", "") for token in self.decode(self.input_ids)]
+        tokens = [self.tokenizer.convert_tokens_to_string(token) for token in tokens]
 
         for index in self._selected_indexes:
             pred_prob = torch.max(self.pred_probs[index])

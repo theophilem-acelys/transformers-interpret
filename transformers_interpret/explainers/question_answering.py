@@ -123,7 +123,7 @@ class QuestionAnsweringExplainer(BaseExplainer):
 
             start = preds[0].argmax()
             end = preds[1].argmax()
-            return " ".join(self.decode(self.input_ids)[start : end + 1])
+            return " ".join([self.tokenizer.convert_tokens_to_string(token) for token inself.decode(self.input_ids)][start : end + 1])
         else:
             raise InputIdsNotCalculatedError("input_ids have not been created yet.`")
 
@@ -135,6 +135,8 @@ class QuestionAnsweringExplainer(BaseExplainer):
         as a html file.
         """
         tokens = [token.replace("Ġ", "") for token in self.decode(self.input_ids)]
+        tokens = [self.tokenizer.convert_tokens_to_string(token) for token in tokens]
+        
         predicted_answer = self.predicted_answer
 
         self.position = 0

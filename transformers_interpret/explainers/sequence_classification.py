@@ -137,6 +137,7 @@ class SequenceClassificationExplainer(BaseExplainer):
 
         """
         tokens = [token.replace("Ġ", "") for token in self.decode(self.input_ids)]
+        tokens = [self.tokenizer.convert_tokens_to_string(token) for token in tokens]
         attr_class = self.id2label[self.selected_index]
 
         if self._single_node_output:

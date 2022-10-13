@@ -63,6 +63,7 @@ class MultiLabelClassificationExplainer(SequenceClassificationExplainer):
 
         """
         tokens = [token.replace("Ġ", "") for token in self.decode(self.input_ids)]
+        tokens = [self.tokenizer.convert_tokens_to_string(token) for token in tokens]
 
         score_viz = [
             self.attributions[i].visualize_attributions(  # type: ignore
